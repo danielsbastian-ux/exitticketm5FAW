@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exit Ticket – Meeting 5 | ELLE 2208</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600;700&display=swap');
+  :root {
+    --primary:#7C3AED; --primary-light:#A78BFA; --accent:#FCD34D;
+    --bg:#080B15; --card:#10142A; --card2:#181D35;
+    --border:#252B45; --text:#EDF0FF; --muted:#7278A0;
+    --success:#10B981; --error:#EF4444; --warning:#F59E0B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 15% 15%,rgba(124,58,237,0.2) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 85% 85%,rgba(252,211,77,0.07) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+  /* Animated particles */
+  .particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .particle{position:absolute;border-radius:50%;animation:float var(--d,8s) var(--delay,0s) infinite ease-in-out;}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1);opacity:var(--op,0.3)}50%{transform:translateY(-30px) scale(1.1);opacity:calc(var(--op,0.3)*1.5)}}
+
+  #landing{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--bg);flex-direction:column;gap:1.5rem;padding:2rem;}
+  .logo-anim{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:700;background:linear-gradient(135deg,var(--primary-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:pulse-text 2.5s ease-in-out infinite;text-align:center;}
+  @keyframes pulse-text{0%,100%{filter:brightness(1) drop-shadow(0 0 0px transparent)}50%{filter:brightness(1.3) drop-shadow(0 0 15px rgba(167,139,250,0.5))}}
+  .landing-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:2.5rem;width:100%;max-width:460px;position:relative;overflow:hidden;}
+  .landing-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--accent),var(--primary));background-size:200%;animation:shimmer 3s linear infinite;}
+  @keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+  .landing-card h2{font-family:'Space Grotesk',sans-serif;font-size:1.25rem;margin-bottom:0.4rem;}
+  .landing-card .subtitle{font-size:0.82rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.5;}
+  .field-group{margin-bottom:1.2rem;}
+  .field-group label{display:block;font-size:0.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.4rem;}
+  .field-group input{width:100%;padding:0.75rem 1rem;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+  .field-group input:focus{border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(167,139,250,0.2);}
+  .btn-start{width:100%;padding:0.9rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));border:none;border-radius:12px;color:white;font-size:1rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;margin-top:0.3rem;}
+  .btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,0.45);}
+
+  #cheat-overlay{display:none;position:fixed;inset:0;background:rgba(8,11,21,0.97);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:1rem;text-align:center;padding:2rem;}
+  #cheat-overlay.show{display:flex;}
+  .cheat-pulse{font-size:4rem;animation:bounce 1s ease-in-out infinite;}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .cheat-badge{background:var(--error);color:white;border-radius:20px;padding:0.35rem 1.2rem;font-size:0.9rem;font-weight:700;}
+
+  #app{display:none;position:relative;z-index:1;max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  #app.show{display:block;}
+
+  .header-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1rem 1.6rem;margin-bottom:2rem;gap:1rem;flex-wrap:wrap;}
+  .header-left{display:flex;flex-direction:column;gap:0.2rem;}
+  .header-title{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;}
+  .header-sub{font-size:0.77rem;color:var(--muted);}
+  .timer-box{display:flex;align-items:center;gap:0.5rem;background:var(--card2);border:2px solid var(--border);border-radius:10px;padding:0.5rem 1.1rem;font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;min-width:90px;justify-content:center;transition:border-color 0.3s,color 0.3s;}
+  .timer-box.warning{border-color:var(--warning);color:var(--warning);}
+  .timer-box.danger{border-color:var(--error);color:var(--error);animation:flash 0.5s ease-in-out infinite;}
+  @keyframes flash{0%,100%{opacity:1}50%{opacity:0.4}}
+  .student-badge{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:0.4rem 0.9rem;font-size:0.82rem;color:var(--muted);}
+  .student-badge strong{color:var(--text);}
+
+  /* Progress tracker */
+  .progress-tracker{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem 1.4rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  .progress-tracker-title{font-size:0.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap;}
+  .prog-dots{display:flex;gap:0.5rem;flex-wrap:wrap;}
+  .prog-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:background 0.3s;}
+  .prog-dot.done{background:var(--success);}
+  .prog-label{font-size:0.78rem;color:var(--muted);margin-left:auto;}
+
+  .section-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1.8rem;margin-bottom:1.5rem;position:relative;overflow:hidden;animation:fadeInUp 0.5s ease both;}
+  .section-card:nth-child(3){animation-delay:0.1s;}
+  .section-card:nth-child(4){animation-delay:0.2s;}
+  .section-card:nth-child(5){animation-delay:0.3s;}
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .section-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--primary),transparent);opacity:0.5;}
+  .section-header{display:flex;align-items:center;gap:0.8rem;margin-bottom:1.3rem;}
+  .section-badge{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:white;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;padding:0.25rem 0.75rem;border-radius:20px;}
+  .section-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;}
+
+  /* Radio-style sentences */
+  .sentence-pair{display:flex;flex-direction:column;gap:0.6rem;margin:1rem 0;}
+  .sentence-option{display:flex;align-items:flex-start;gap:0.8rem;background:var(--card2);border:2px solid var(--border);border-radius:12px;padding:0.9rem 1.1rem;cursor:pointer;transition:border-color 0.2s,background 0.2s;}
+  .sentence-option:hover{border-color:var(--primary-light);}
+  .sentence-option.selected{border-color:var(--primary-light);background:rgba(124,58,237,0.1);}
+  .option-letter{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--border);color:var(--muted);font-size:0.8rem;font-weight:700;flex-shrink:0;transition:background 0.2s,color 0.2s;}
+  .sentence-option.selected .option-letter{background:var(--primary);color:white;}
+  .option-text{font-size:0.88rem;line-height:1.6;}
+
+  /* Q&A blocks */
+  .q-block{margin-bottom:1.5rem;}
+  .q-label{font-size:0.9rem;font-weight:500;margin-bottom:0.6rem;line-height:1.6;display:flex;gap:0.6rem;}
+  .qnum{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:var(--primary);border-radius:50%;font-size:0.75rem;font-weight:700;color:white;flex-shrink:0;margin-top:1px;}
+  textarea{width:100%;padding:0.8rem 1rem;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.9rem;font-family:'Inter',sans-serif;resize:vertical;min-height:85px;line-height:1.7;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+  textarea:focus{border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(167,139,250,0.15);}
+  .char-count{font-size:0.75rem;color:var(--muted);text-align:right;margin-top:0.25rem;}
+
+  /* Checklist */
+  .checklist{display:flex;flex-direction:column;gap:0.5rem;}
+  .check-item{display:flex;align-items:flex-start;gap:0.8rem;padding:0.7rem 0.9rem;background:var(--card2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.2s,background 0.2s;}
+  .check-item:hover{border-color:var(--primary-light);}
+  .check-item.checked{border-color:var(--success);background:rgba(16,185,129,0.07);}
+  .checkbox{width:20px;height:20px;border:2px solid var(--border);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;}
+  .check-item.checked .checkbox{background:var(--success);border-color:var(--success);}
+  .checkbox::after{content:'✓';color:white;font-size:0.7rem;font-weight:700;opacity:0;transition:opacity 0.15s;}
+  .check-item.checked .checkbox::after{opacity:1;}
+  .check-text{font-size:0.88rem;line-height:1.5;}
+  .word-count-input{width:80px;padding:0.2rem 0.5rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;margin-left:0.3rem;}
+  .word-count-input:focus{border-color:var(--primary-light);}
+
+  .submit-area{text-align:center;margin-top:2rem;}
+  .btn-submit{padding:0.9rem 3.5rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));border:none;border-radius:12px;color:white;font-size:1rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;letter-spacing:0.06em;}
+  .btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,0.5);}
+
+  /* Warn */
+  .warn-banner{display:none;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.4);border-radius:10px;padding:0.8rem 1rem;font-size:0.88rem;color:var(--warning);margin-bottom:1rem;text-align:center;}
+  .warn-banner.show{display:block;animation:fadeInUp 0.3s ease;}
+
+  /* Modal */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(8,11,21,0.88);z-index:300;align-items:center;justify-content:center;padding:1rem;}
+  .modal-overlay.show{display:flex;}
+  .modal-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;max-width:400px;width:100%;text-align:center;animation:fadeInUp 0.3s ease;}
+  .modal-card h3{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;margin-bottom:0.4rem;}
+  .modal-card p{font-size:0.87rem;color:var(--muted);margin-bottom:1.5rem;}
+  .modal-btns{display:flex;gap:1rem;justify-content:center;}
+  .btn-yes{padding:0.7rem 2.2rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));border:none;border-radius:10px;color:white;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;font-size:0.95rem;transition:transform 0.15s;}
+  .btn-yes:hover{transform:scale(1.04);}
+  .btn-no{padding:0.7rem 2.2rem;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;font-size:0.95rem;transition:all 0.15s;}
+  .btn-no:hover{border-color:var(--primary-light);color:var(--text);}
+
+  /* Results */
+  #results{display:none;position:relative;z-index:1;max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  #results.show{display:block;}
+  .results-hero{text-align:center;margin-bottom:2.5rem;}
+  .results-hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.6rem,4vw,2.3rem);background:linear-gradient(135deg,var(--primary-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.3rem;}
+  .score-ring{width:130px;height:130px;border-radius:50%;background:conic-gradient(var(--primary) var(--pct,0%),var(--card2) var(--pct,0%));display:flex;align-items:center;justify-content:center;margin:1.5rem auto;position:relative;}
+  .score-ring::before{content:'';width:98px;height:98px;border-radius:50%;background:var(--card);position:absolute;}
+  .score-ring span{position:relative;z-index:1;font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;}
+  .res-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.4rem;margin-bottom:1rem;animation:fadeInUp 0.4s ease both;}
+  .res-head{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.8rem;}
+  .res-badge{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;flex-shrink:0;}
+  .res-badge.correct{background:rgba(16,185,129,0.2);color:var(--success);border:1px solid rgba(16,185,129,0.4);}
+  .res-badge.partial{background:rgba(245,158,11,0.2);color:var(--warning);border:1px solid rgba(245,158,11,0.4);}
+  .res-badge.incorrect{background:rgba(239,68,68,0.2);color:var(--error);border:1px solid rgba(239,68,68,0.4);}
+  .res-label{font-size:0.87rem;font-weight:600;}
+  .res-student{font-size:0.83rem;background:var(--card2);border-radius:8px;padding:0.5rem 0.8rem;margin:0.5rem 0;color:var(--muted);}
+  .res-student strong{color:var(--text);}
+  .res-model{font-size:0.82rem;color:var(--success);margin-top:0.5rem;padding:0.5rem 0.8rem;background:rgba(16,185,129,0.08);border-radius:8px;}
+  .prog-bar{height:4px;background:var(--card2);border-radius:2px;margin:0.4rem 0;}
+  .prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--primary),var(--primary-light));transition:width 1.2s ease;}
+  .checklist-result{font-size:0.83rem;display:flex;flex-direction:column;gap:0.3rem;}
+  .check-res-item{display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0;}
+  @media(max-width:600px){.header-bar{flex-direction:column;align-items:flex-start;}}
+</style>
+</head>
+<body>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Cheat overlay -->
+<div id="cheat-overlay">
+  <div class="cheat-pulse">🚫</div>
+  <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;color:var(--error);">Tab Switching Detected</h2>
+  <p style="color:var(--muted);max-width:400px;font-size:0.9rem;">You left this tab or minimized the window. This is recorded and reported to your instructor.</p>
+  <div class="cheat-badge" id="cheat-count">Violation #1</div>
+  <p style="font-size:0.82rem;color:var(--muted);">Return to complete your exit ticket.</p>
+  <button class="btn-submit" onclick="dismissCheat()" style="padding:0.75rem 2rem;margin-top:0.5rem;">Return to Assessment</button>
+</div>
+
+<!-- Landing -->
+<div id="landing">
+  <div class="logo-anim">ELLE 2208 ✦</div>
+  <div style="text-align:center;color:var(--muted);font-size:0.88rem;">Foundation of Academic Writing — Meeting 5</div>
+  <div class="landing-card">
+    <h2>🎟 Exit Ticket</h2>
+    <div class="subtitle">Meeting 5: Process Paragraphs<br>Sections 1 (Concept Check) + 2 (Self-Assessment) + 3 (Reflection)<br>Time allowed: <strong style="color:var(--text)">10 minutes</strong></div>
+    <div class="field-group">
+      <label>Full Name</label>
+      <input type="text" id="input-name" placeholder="Enter your full name" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <label>Student ID</label>
+      <input type="text" id="input-id" placeholder="Enter your student ID" autocomplete="off">
+    </div>
+    <button class="btn-start" onclick="startAssessment()">Begin Exit Ticket →</button>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <div class="header-bar">
+    <div class="header-left">
+      <div class="header-title">Exit Ticket — Meeting 5</div>
+      <div class="header-sub">ELLE 2208 · Process Paragraphs · Individual</div>
+    </div>
+    <div class="student-badge" id="student-badge">Student</div>
+    <div class="timer-box" id="timer">10:00</div>
+  </div>
+
+  <div class="warn-banner" id="warn-banner">⚠️ Please answer all required questions before submitting.</div>
+
+  <!-- Section 1 -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-badge">Section 1</span>
+      <span class="section-title">Concept Check — 3 Questions</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="q-block">
+      <div class="q-label"><span class="qnum">1</span>In one sentence, explain the main difference between a listing-order paragraph and a process paragraph.</div>
+      <textarea id="q1" placeholder="Write your explanation here..." oninput="updateCount('q1','c1')"></textarea>
+      <div class="char-count" id="c1">0 words</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="q-block">
+      <div class="q-label"><span class="qnum">2</span>Which is the more advanced sequence signal use? Select the better option and explain why in one sentence.</div>
+      <div class="sentence-pair">
+        <div class="sentence-option" id="opt-A" onclick="selectOption('A')">
+          <div class="option-letter">A</div>
+          <div class="option-text"><em>"Then, stir the mixture. Then, wait. Then, add the salt."</em></div>
+        </div>
+        <div class="sentence-option" id="opt-B" onclick="selectOption('B')">
+          <div class="option-letter">B</div>
+          <div class="option-text"><em>"Once the mixture is smooth, stir in the salt and allow it to dissolve while the heat remains low."</em></div>
+        </div>
+      </div>
+      <div class="q-label" style="margin-top:0.8rem;"><span style="width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;background:var(--card2);border-radius:50%;font-size:0.75rem;font-weight:700;flex-shrink:0;margin-right:0.5rem;">Why</span>Explain why it is better:</div>
+      <textarea id="q2why" placeholder="Explain your choice in one sentence..." oninput="updateCount('q2why','c2')"></textarea>
+      <div class="char-count" id="c2">0 words</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="q-block">
+      <div class="q-label"><span class="qnum">3</span>Look at your paragraph from today's drafting workshop. Identify ONE step where you could add a brief WHY explanation. Write the original sentence, then rewrite it with the explanation added.</div>
+      <div class="q-label" style="font-size:0.84rem;color:var(--muted);margin-bottom:0.4rem;">Original sentence:</div>
+      <textarea id="q3orig" placeholder="Copy your original sentence here..." style="min-height:65px;" oninput="updateCount('q3orig','c3a')"></textarea>
+      <div class="char-count" id="c3a">0 words</div>
+      <div class="q-label" style="font-size:0.84rem;color:var(--muted);margin-bottom:0.4rem;margin-top:0.5rem;">Revised sentence with WHY explanation:</div>
+      <textarea id="q3rev" placeholder="Rewrite the sentence with an explanation of why the step is important..." oninput="updateCount('q3rev','c3b')"></textarea>
+      <div class="char-count" id="c3b">0 words</div>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-badge">Section 2</span>
+      <span class="section-title">Self-Assessment Checklist</span>
+    </div>
+    <p style="font-size:0.84rem;color:var(--muted);margin-bottom:1rem;">Review your paragraph draft from today and tick the boxes honestly.</p>
+    <div class="checklist">
+      <div class="check-item" id="chk0" onclick="toggleCheck(0)">
+        <div class="checkbox"></div>
+        <div class="check-text">My topic sentence promises a process, not just a fact.</div>
+      </div>
+      <div class="check-item" id="chk1" onclick="toggleCheck(1)">
+        <div class="checkbox"></div>
+        <div class="check-text">My steps are in a fixed, correct chronological order. I cannot move them without breaking the process.</div>
+      </div>
+      <div class="check-item" id="chk2" onclick="toggleCheck(2)">
+        <div class="checkbox"></div>
+        <div class="check-text">I used at least five DIFFERENT sequence signals (I did not repeat 'then' more than once).</div>
+      </div>
+      <div class="check-item" id="chk3" onclick="toggleCheck(3)">
+        <div class="checkbox"></div>
+        <div class="check-text">I included at least one explanation of WHY a step is important.</div>
+      </div>
+      <div class="check-item" id="chk4" onclick="toggleCheck(4)">
+        <div class="checkbox"></div>
+        <div class="check-text">My concluding sentence refers back to the process and closes the paragraph logically.</div>
+      </div>
+      <div class="check-item" id="chk5" onclick="toggleCheck(5)" style="display:flex;align-items:center;">
+        <div class="checkbox"></div>
+        <div class="check-text">My paragraph is between 120 and 160 words (word count: <input type="number" class="word-count-input" id="word-count-input" placeholder="count" min="0" max="999" onclick="e=>e.stopPropagation()" oninput="updateWordCount()">).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-badge">Section 3</span>
+      <span class="section-title">Reflection</span>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label"><span class="qnum">R1</span>What is the most important writing skill you practised today? (2 sentences)</div>
+      <textarea id="r1" placeholder="Describe the key skill you developed today..." oninput="updateCount('r1','rc1')"></textarea>
+      <div class="char-count" id="rc1">0 words</div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label"><span class="qnum">R2</span>What is one thing you will improve before you submit your final paragraph? (2 sentences)</div>
+      <textarea id="r2" placeholder="Describe your improvement goal..." oninput="updateCount('r2','rc2')"></textarea>
+      <div class="char-count" id="rc2">0 words</div>
+    </div>
+  </div>
+
+  <div class="submit-area">
+    <button class="btn-submit" onclick="attemptSubmit()">Submit</button>
+  </div>
+</div>
+
+<!-- Results -->
+<div id="results">
+  <div class="results-hero">
+    <h1>Exit Ticket Submitted ✦</h1>
+    <p style="color:var(--muted);font-size:0.88rem;" id="results-meta"></p>
+    <div class="score-ring" id="score-ring"><span id="score-pct">—</span></div>
+    <p id="score-label" style="color:var(--muted);font-size:0.85rem;"></p>
+  </div>
+  <div id="results-body"></div>
+</div>
+
+<!-- Confirm modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-card">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem;">🎟</div>
+    <h3>Submit exit ticket?</h3>
+    <p>Once submitted you cannot edit your answers. This will be collected by your instructor.</p>
+    <div class="modal-btns">
+      <button class="btn-yes" onclick="confirmSubmit()">Yes</button>
+      <button class="btn-no" onclick="closeModal()">No</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Particles
+(function(){
+  const c=document.getElementById('particles');
+  const colors=['rgba(167,139,250,','rgba(252,211,77,','rgba(16,185,129,'];
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const col=colors[Math.floor(Math.random()*colors.length)];
+    const size=2+Math.random()*4;
+    p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;background:${col}${0.1+Math.random()*0.3});`;
+    p.style.setProperty('--d',(6+Math.random()*8)+'s');
+    p.style.setProperty('--delay',(Math.random()*8)+'s');
+    p.style.setProperty('--op',(0.1+Math.random()*0.3).toString());
+    c.appendChild(p);
+  }
+})();
+
+let studentName='',studentId='',cheatCount=0,timerInterval;
+let totalSeconds=10*60;
+let selectedQ2='';
+let checks=new Array(6).fill(false);
+
+function startAssessment(){
+  studentName=document.getElementById('input-name').value.trim();
+  studentId=document.getElementById('input-id').value.trim();
+  if(!studentName||!studentId){alert('Please enter your full name and student ID.');return;}
+  document.getElementById('landing').style.display='none';
+  document.getElementById('app').classList.add('show');
+  document.getElementById('student-badge').innerHTML=`<strong>${studentName}</strong> · ${studentId}`;
+  startTimer();
+  setupAntiCheat();
+}
+
+function updateCount(id,cid){
+  const val=document.getElementById(id).value.trim();
+  const words=val?val.split(/\s+/).filter(Boolean).length:0;
+  document.getElementById(cid).textContent=words+' word'+(words!==1?'s':'');
+}
+
+function updateWordCount(){}
+
+function selectOption(opt){
+  selectedQ2=opt;
+  document.getElementById('opt-A').classList.toggle('selected',opt==='A');
+  document.getElementById('opt-B').classList.toggle('selected',opt==='B');
+}
+
+function toggleCheck(i){
+  checks[i]=!checks[i];
+  document.getElementById('chk'+i).classList.toggle('checked',checks[i]);
+}
+
+function startTimer(){
+  const el=document.getElementById('timer');
+  timerInterval=setInterval(()=>{
+    totalSeconds--;
+    const m=Math.floor(totalSeconds/60),s=totalSeconds%60;
+    el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    el.className='timer-box';
+    if(totalSeconds<=180)el.classList.add('warning');
+    if(totalSeconds<=60)el.classList.add('danger');
+    if(totalSeconds<=0){clearInterval(timerInterval);confirmSubmit();}
+  },1000);
+}
+
+function setupAntiCheat(){
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden&&document.getElementById('app').classList.contains('show')&&!document.getElementById('results').classList.contains('show')){
+      cheatCount++;document.getElementById('cheat-count').textContent=`Violation #${cheatCount}`;
+      document.getElementById('cheat-overlay').classList.add('show');
+    }
+  });
+  window.addEventListener('blur',()=>{
+    if(document.getElementById('app').classList.contains('show')&&!document.getElementById('results').classList.contains('show')){
+      cheatCount++;document.getElementById('cheat-count').textContent=`Violation #${cheatCount}`;
+      document.getElementById('cheat-overlay').classList.add('show');
+    }
+  });
+}
+
+function dismissCheat(){document.getElementById('cheat-overlay').classList.remove('show');}
+
+function allAnswered(){
+  const q1=document.getElementById('q1').value.trim();
+  const q2why=document.getElementById('q2why').value.trim();
+  const q3orig=document.getElementById('q3orig').value.trim();
+  const q3rev=document.getElementById('q3rev').value.trim();
+  const r1=document.getElementById('r1').value.trim();
+  const r2=document.getElementById('r2').value.trim();
+  return q1&&q2why&&selectedQ2&&q3orig&&q3rev&&r1&&r2;
+}
+
+function attemptSubmit(){
+  if(!allAnswered()){document.getElementById('warn-banner').classList.add('show');return;}
+  document.getElementById('warn-banner').classList.remove('show');
+  document.getElementById('confirm-modal').classList.add('show');
+}
+
+function closeModal(){document.getElementById('confirm-modal').classList.remove('show');}
+
+function confirmSubmit(){
+  closeModal();
+  clearInterval(timerInterval);
+  const data=collectData();
+  submitToSheets(data);
+  showResults(data);
+}
+
+function collectData(){
+  return{
+    studentName,studentId,
+    timestamp:new Date().toISOString(),
+    cheatCount,
+    q1:document.getElementById('q1').value.trim(),
+    q2selected:selectedQ2,
+    q2why:document.getElementById('q2why').value.trim(),
+    q3orig:document.getElementById('q3orig').value.trim(),
+    q3rev:document.getElementById('q3rev').value.trim(),
+    checks:[...checks],
+    wordCount:document.getElementById('word-count-input').value||'',
+    r1:document.getElementById('r1').value.trim(),
+    r2:document.getElementById('r2').value.trim(),
+  };
+}
+
+const SHEET_URL='https://script.google.com/macros/s/AKfycbwpUrSLGzKaH9mRJqAo0w1K1QrmtBcrj8dPUN2KfO_CQilwqHFtgGNikskja-uDX-Bh/exec';
+
+async function submitToSheets(data){
+  try{
+    await fetch(SHEET_URL,{
+      method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        sheet:'ExitTicket',
+        name:data.studentName,id:data.studentId,timestamp:data.timestamp,
+        cheatViolations:data.cheatCount,
+        q1:data.q1,q2selected:data.q2selected,q2why:data.q2why,
+        q3orig:data.q3orig,q3rev:data.q3rev,
+        checks:data.checks.join(','),wordCount:data.wordCount,
+        r1:data.r1,r2:data.r2
+      })
+    });
+  }catch(e){console.warn('Sheet error:',e);}
+}
+
+// Flexible scoring using AI-like keyword matching + intent detection
+function scoreQ1(ans){
+  const a=ans.toLowerCase();
+  const processKeywords=['fixed','mandatory','chronological','order','sequence','cannot change','must follow','steps','required'];
+  const listingKeywords=['listing','categories','any order','items','can be rearranged','topics','independent'];
+  const processHits=processKeywords.filter(k=>a.includes(k)).length;
+  const listingHits=listingKeywords.filter(k=>a.includes(k)).length;
+  const words=ans.split(/\s+/).filter(Boolean).length;
+  if(processHits>=2&&listingHits>=1&&words>=10) return{score:3,grade:'correct',feedback:'✅ Excellent — correctly identifies the key distinction with relevant vocabulary.'};
+  if((processHits>=1||listingHits>=1)&&words>=8) return{score:2,grade:'partial',feedback:'⚠️ Partially correct — the core idea is present but could be more precise.'};
+  if(words>=5&&(a.includes('order')||a.includes('sequence')||a.includes('steps'))) return{score:1,grade:'partial',feedback:'⚠️ Basic understanding shown but key distinction not fully articulated.'};
+  return{score:0,grade:'incorrect',feedback:'❌ Answer does not clearly distinguish the two paragraph types.'};
+}
+
+function scoreQ2(selected,why){
+  const a=why.toLowerCase();
+  const correctSelected=selected==='B';
+  const whyKeywords=['conditional','simultaneous','specific','while','once','meaning','precise','function','context','dependent','advanced','varied','mechanical'];
+  const hits=whyKeywords.filter(k=>a.includes(k)).length;
+  const words=why.split(/\s+/).filter(Boolean).length;
+  let score=0,grade='incorrect',feedback='';
+  if(correctSelected&&hits>=1&&words>=8){score=3;grade='correct';feedback='✅ Correct choice with a good explanation of WHY advanced signals are more effective.';}
+  else if(correctSelected&&words>=5){score=2;grade='partial';feedback='⚠️ Correct choice, but explanation could be more specific about what makes it advanced.';}
+  else if(correctSelected){score=1;grade='partial';feedback='⚠️ Correct choice selected, but explanation is missing or too brief.';}
+  else{score=0;grade='incorrect';feedback='❌ Option B is the more advanced use. Review Level 3 signal use from the lesson input.';}
+  return{score,grade,feedback};
+}
+
+function scoreQ3(orig,rev){
+  const ro=orig.split(/\s+/).filter(Boolean).length;
+  const rr=rev.split(/\s+/).filter(Boolean).length;
+  const extra=rr-ro;
+  const whyWords=['because','so that','this','which','to','in order','allows','helps','ensures','prevents','releases','improves','enables','this step'];
+  const hits=whyWords.filter(k=>rev.toLowerCase().includes(k)).length;
+  if(hits>=1&&extra>=3&&rr>=10) return{score:3,grade:'correct',feedback:'✅ Excellent revision — a clear WHY explanation is added naturally.'};
+  if(hits>=1&&extra>=1) return{score:2,grade:'partial',feedback:'⚠️ Some explanation added, but could be more specific about the purpose.'};
+  if(extra>=3&&rr>ro) return{score:1,grade:'partial',feedback:'⚠️ Sentence is expanded but lacks a clear WHY explanation (because/so that/this allows...).'};
+  return{score:0,grade:'incorrect',feedback:'❌ Revised sentence should include an explanation of why the step is important.'};
+}
+
+function scoreReflections(r1,r2){
+  const r1w=r1.split(/\s+/).filter(Boolean).length;
+  const r2w=r2.split(/\s+/).filter(Boolean).length;
+  const skillWords=['sequence','signal','order','chronological','process','explain','why','structure','step','paragraph','write','writing','organisation','conclude'];
+  const r1hits=skillWords.filter(k=>r1.toLowerCase().includes(k)).length;
+  const r2hits=['improve','revise','revision','add','include','change','better','next time','will','before'].filter(k=>r2.toLowerCase().includes(k)).length;
+  const s1=r1w>=12&&r1hits>=1?2:r1w>=6?1:0;
+  const s2=r2w>=12&&r2hits>=1?2:r2w>=6?1:0;
+  return{r1Score:s1,r2Score:s2};
+}
+
+function showResults(data){
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('results').classList.add('show');
+
+  const q1r=scoreQ1(data.q1);
+  const q2r=scoreQ2(data.q2selected,data.q2why);
+  const q3r=scoreQ3(data.q3orig,data.q3rev);
+  const rr=scoreReflections(data.r1,data.r2);
+  const total=Math.round((q1r.score+q2r.score+q3r.score+rr.r1Score+rr.r2Score)/13*100);
+
+  document.getElementById('results-meta').textContent=`${data.studentName} · ${data.studentId} · ${new Date().toLocaleTimeString()}`;
+  const ring=document.getElementById('score-ring');
+  ring.style.setProperty('--pct',total+'%');
+  document.getElementById('score-pct').textContent=total+'%';
+  document.getElementById('score-label').textContent=total>=80?'🌟 Outstanding!':total>=60?'👍 Good work!':total>=40?'📖 Developing — review the lesson concepts.':'📘 Please revisit the material.';
+
+  let html='';
+
+  // Q1
+  html+=`<div class="res-card"><div class="res-head"><div class="res-badge ${q1r.grade}">${q1r.score}/3</div><div class="res-label">Q1 — Listing-Order vs. Process Distinction</div></div>
+  <div class="prog-bar"><div class="prog-fill" style="width:${q1r.score/3*100}%"></div></div>
+  <div class="res-student"><strong>Your answer:</strong> ${data.q1}</div>
+  <div style="font-size:0.82rem;margin-top:0.4rem;">${q1r.feedback}</div>
+  <div class="res-model"><strong>Model answer:</strong> A listing-order paragraph presents categories or items that can appear in any order, while a process paragraph presents steps in a fixed, mandatory chronological sequence — changing the order would break or change the result.</div></div>`;
+
+  // Q2
+  html+=`<div class="res-card"><div class="res-head"><div class="res-badge ${q2r.grade}">${q2r.score}/3</div><div class="res-label">Q2 — Advanced Sequence Signal Use</div></div>
+  <div class="prog-bar"><div class="prog-fill" style="width:${q2r.score/3*100}%"></div></div>
+  <div class="res-student"><strong>Selected:</strong> Option ${data.q2selected} &nbsp;|&nbsp; <strong>Explanation:</strong> ${data.q2why}</div>
+  <div style="font-size:0.82rem;margin-top:0.4rem;">${q2r.feedback}</div>
+  <div class="res-model"><strong>Model answer:</strong> Option B is better because it uses conditional ('once') and simultaneous ('while') signals that show logical relationships between steps, rather than mechanically repeating 'then' which only marks sequence without conveying meaning.</div></div>`;
+
+  // Q3
+  html+=`<div class="res-card"><div class="res-head"><div class="res-badge ${q3r.grade}">${q3r.score}/3</div><div class="res-label">Q3 — Adding a WHY Explanation</div></div>
+  <div class="prog-bar"><div class="prog-fill" style="width:${q3r.score/3*100}%"></div></div>
+  <div class="res-student"><strong>Original:</strong> ${data.q3orig}<br><strong>Revised:</strong> ${data.q3rev}</div>
+  <div style="font-size:0.82rem;margin-top:0.4rem;">${q3r.feedback}</div>
+  <div class="res-model"><strong>Tip:</strong> Use connectives like "because", "so that", "which", "this allows", or "this step ensures" to add your WHY explanation naturally within the sentence.</div></div>`;
+
+  // Checklist
+  const checkLabels=['Topic sentence promises a process','Steps in correct chronological order','5+ different sequence signals used','At least one WHY explanation included','Concluding sentence closes paragraph','Paragraph is 120–160 words'];
+  html+=`<div class="res-card"><div class="res-head"><div class="res-badge ${data.checks.filter(Boolean).length>=5?'correct':data.checks.filter(Boolean).length>=3?'partial':'incorrect'}">${data.checks.filter(Boolean).length}/6</div><div class="res-label">Section 2 — Self-Assessment Checklist</div></div>
+  <div class="checklist-result">`;
+  data.checks.forEach((c,i)=>{
+    html+=`<div class="check-res-item"><span style="color:${c?'var(--success)':'var(--muted)'}">${c?'✅':'⬜'}</span><span style="font-size:0.84rem;color:${c?'var(--text)':'var(--muted)'};">${checkLabels[i]}${i===5&&data.wordCount?` (${data.wordCount} words)`:''}</span></div>`;
+  });
+  html+=`</div></div>`;
+
+  // Reflections
+  html+=`<div class="res-card"><div class="res-head"><div class="res-badge ${rr.r1Score+rr.r2Score>=3?'correct':'partial'}">${rr.r1Score+rr.r2Score}/4</div><div class="res-label">Section 3 — Reflection</div></div>
+  <div class="res-student"><strong>R1 – Key skill practised:</strong> ${data.r1}</div>
+  <div style="font-size:0.8rem;color:${rr.r1Score>=2?'var(--success)':'var(--warning)'};margin:0.3rem 0;">${rr.r1Score>=2?'✅ Good reflection on a specific skill.':'⚠️ Try to name a specific writing skill or concept.'}</div>
+  <div class="res-student" style="margin-top:0.5rem;"><strong>R2 – Improvement goal:</strong> ${data.r2}</div>
+  <div style="font-size:0.8rem;color:${rr.r2Score>=2?'var(--success)':'var(--warning)'};margin:0.3rem 0;">${rr.r2Score>=2?'✅ Specific improvement goal identified.':'⚠️ Be more specific about what you will change and how.'}</div></div>`;
+
+  if(data.cheatCount>0){
+    html+=`<div class="res-card" style="border-color:rgba(239,68,68,0.4);"><div style="color:var(--error);font-size:0.85rem;">⚠️ <strong>${data.cheatCount} tab-switch violation(s)</strong> recorded during this session. This has been reported.</div></div>`;
+  }
+
+  document.getElementById('results-body').innerHTML=html;
+}
+</script>
+</body>
+</html>
